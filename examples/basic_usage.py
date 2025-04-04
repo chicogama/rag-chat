@@ -8,7 +8,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.search.semantic_search import SemanticSearchEngine
 from src.embedding.text_embedder import TextEmbedder
 from src.chunking.website_chunker import WebsiteChunker
+import nltk
 
+nltk.download('punkt_tab')
 
 def run_example():
     # URL de exemplo

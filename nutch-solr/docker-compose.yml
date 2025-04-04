@@ -1,0 +1,46 @@
+services:
+  solr:
+    image: solr:8.2
+    container_name: solr
+    ports:
+      - "8983:8983"
+    volumes:
+      - solr_data:/var/solr
+    command:
+      - solr-precreate
+      - nutch
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8983/solr/nutch/admin/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - crawler_network
+
+  nutch:
+    image: apache/nutch
+    container_name: nutch
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./nutch/conf/nutch-site.xml:/root/nutch_source/runtime/local/conf/nutch-site.xml
+      - ./nutch/conf/regex-urlfilter.txt:/root/nutch_source/runtime/local/conf/regex-urlfilter.txt
+      - ./nutch/urls/seed.txt:/root/nutch_source/runtime/local/conf/urls/seed.txt
+      - ./nutch/crawl:/root/nutch_source/runtime/local/crawl
+    depends_on:
+      solr:
+        condition: service_healthy
+    networks:
+      - crawler_network
+#    environment:
+#      - NUTCH_SOLR_SERVER=http://solr:8983/solr/nutch
+#
+volumes:
+  solr_data:
+
+networks:
+  crawler_network:
+    driver: bridge
