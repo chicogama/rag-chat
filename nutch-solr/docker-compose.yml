@@ -27,9 +27,11 @@ services:
     stdin_open: true
     volumes:
       - ./nutch/conf/nutch-site.xml:/root/nutch_source/runtime/local/conf/nutch-site.xml
+      - ./nutch/conf/index-writers.xml:/root/nutch_source/runtime/local/conf/index-writers.xml
       - ./nutch/conf/regex-urlfilter.txt:/root/nutch_source/runtime/local/conf/regex-urlfilter.txt
       - ./nutch/urls/seed.txt:/root/nutch_source/runtime/local/conf/urls/seed.txt
       - ./nutch/crawl:/root/nutch_source/runtime/local/crawl
+      - ./nutch/crawl.sh:/root/nutch_source/runtime/local/crawl.sh
     depends_on:
       solr:
         condition: service_healthy
